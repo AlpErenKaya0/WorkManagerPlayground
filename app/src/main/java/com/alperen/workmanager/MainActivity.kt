@@ -52,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // SORUNUN TESPİTİ, BURADAKİ YAPI YENİ BİR YAPI YARATIYOR, BU YÜZDEN YUKARIDAKİ KONTROLLERE TAKILSA BİLE DEVAM EDİYOR
+    //ÇÜNKÜ 0'DAN TEKRARDAN BUİLD EDİYORUZ, ONETİME YERİNE PERİODİC BU İŞİ DÜZELTİR Mİ TEST EDİLMELİ
     private fun createNewWMWork() {
         newWorkManagerClass = OneTimeWorkRequestBuilder<NewWorkManagerClass>()
             .setInitialDelay(10, TimeUnit.SECONDS)
