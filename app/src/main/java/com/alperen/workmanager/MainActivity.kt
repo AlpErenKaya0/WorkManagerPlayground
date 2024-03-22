@@ -16,29 +16,42 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         WorkManager.getInstance(this).cancelAllWork()
+        val newWorkManagerClass: WorkRequest = OneTimeWorkRequestBuilder<NewWorkManagerClass>()
+            .setInitialDelay(10, TimeUnit.SECONDS)
+            .build()
+        //aşağıdaki instance satırı Observer'daki ENQUEUED'da güncel işlem varsa işlem yapılmasını engelleyecek
+        // ve isFinished durumunda veya WorkManager'ın iptal edilmesi durumunda instance'ının yeniden alınmasını sağlayacak
+        //yapı kurulabilir
+        WorkManager.getInstance(this).enqueue(newWorkManagerClass)
+        WorkManager.getInstance(this).getWorkInfoByIdLiveData(newWorkManagerClass.id).observe(this,
+            Observer {workInfo->
+                if (workInfo != null && workInfo.state.isFinished) {
+                    println("TESTtest")
+                    // aşağıdaki yemedi
+                    /*
+                WorkManager.getInstance(this).enqueue(newWorkManagerClass)
+                     */
+//bu çalışıyor ama her seferinde onCreate'de başlatılan gibi bunun için de ayrı kontrolör başlatmamız gerekir, olmaz
+                    /*
+                    val newWorkManagerClass = OneTimeWorkRequestBuilder<NewWorkManagerClass>()
+                        .setInitialDelay(10, TimeUnit.SECONDS)
+                        .build()
+                    WorkManager.getInstance(this).enqueue(newWorkManagerClass)
+
+
+                     */
+                }
+                else if (workInfo != null && workInfo.state == WorkInfo.State.ENQUEUED){
+                    println("enqueue")
+
+
+                }
+            })
         val button = findViewById<Button>(R.id.button)
         button.setOnClickListener {
-            val newWorkManagerClass: WorkRequest = OneTimeWorkRequestBuilder<NewWorkManagerClass>()
-                .setInitialDelay(3, TimeUnit.SECONDS)
-                .build()
-            //aşağıdaki instance satırı Observer'daki ENQUEUED'da güncel işlem varsa işlem yapılmasını engelleyecek
-            // ve isFinished durumunda veya WorkManager'ın iptal edilmesi durumunda instance'ının yeniden alınmasını sağlayacak
-            //yapı kurulabilir
-            WorkManager.getInstance(this).enqueue(newWorkManagerClass)
-
-            WorkManager.getInstance(this).getWorkInfoByIdLiveData(newWorkManagerClass.id).observe(this,
-                Observer {workInfo->
-                    if (workInfo != null && workInfo.state.isFinished) {
-                        println("TESTtest")
 
 
-                    }
-                    else if (workInfo != null && workInfo.state == WorkInfo.State.ENQUEUED){
-                        println("enqueue")
 
-
-                    }
-                })
 /*
             WorkManager.getInstance(this).getWorkInfoByIdLiveData(newWorkManagerClass.id).observe(this, Observer { workInfo ->
                 if (workInfo != null && workInfo.state == WorkInfo.State.ENQUEUED) {
